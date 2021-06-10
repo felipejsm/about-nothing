@@ -20,7 +20,9 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -36,10 +38,14 @@ public class QuoteUploadImpl implements QuoteUpload {
     public Resource myFile;
     @Override
     public void UploadSingleFile(Quote quotes) {
+        Map<String, String> myMap = new HashMap<>();
+        myMap.put("meta1", "data1");
+        myMap.put("meta2", "data2");
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(this.s3Configuration.getBucket())
                 .key(quotes.name)
-                .contentType(quotes.contentType)//"image/jpeg")
+                .contentType(quotes.contentType)
+                .metadata(myMap)
                 .build();
         CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
                 putOb, AsyncRequestBody.fromBytes(quotes.physical)

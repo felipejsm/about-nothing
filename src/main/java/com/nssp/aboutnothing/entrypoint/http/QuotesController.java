@@ -1,6 +1,7 @@
 package com.nssp.aboutnothing.entrypoint.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nssp.aboutnothing.data.model.Pun;
 import com.nssp.aboutnothing.data.model.Quote;
 import com.nssp.aboutnothing.usecase.QuoteUpload;
 import org.springframework.http.MediaType;
@@ -38,5 +39,8 @@ public class QuotesController {
         this.quoteUpload.UploadMultipleFiles(quotes);
         return "ok";
     }
-
+    @PostMapping(value= "/mult2")
+    public String mult2(@RequestBody List<Pun> pun) {
+        return "ok";
+    }
 }
