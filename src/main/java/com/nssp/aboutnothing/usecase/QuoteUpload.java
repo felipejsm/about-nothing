@@ -1,6 +1,6 @@
 package com.nssp.aboutnothing.usecase;
 
-import com.nssp.aboutnothing.data.Quote;
+import com.nssp.aboutnothing.data.model.Quote;
 
 import java.util.List;
 

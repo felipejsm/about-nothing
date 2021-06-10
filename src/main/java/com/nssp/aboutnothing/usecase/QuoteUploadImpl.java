@@ -5,14 +5,20 @@ import com.amazonaws.services.s3.transfer.Transfer;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.nssp.aboutnothing.configuration.S3ClientConfiguration;
-import com.nssp.aboutnothing.data.Quote;
+import com.nssp.aboutnothing.data.model.Quote;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,11 +26,14 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class QuoteUploadImpl implements QuoteUpload {
     private S3AsyncClient s3AsyncClient;
+    private S3Client s3Client;
     private S3ClientConfiguration s3Configuration;
     public QuoteUploadImpl(S3ClientConfiguration s3Configuration) {
         this.s3Configuration = s3Configuration;
+        this.s3AsyncClient = this.s3Configuration.getAsyncClient();
     }
-
+    @Value("classpath:george_and_seinfeld_cafe.png")
+    public Resource myFile;
     @Override
     public void UploadSingleFile(Quote quotes) {
         PutObjectRequest putOb = PutObjectRequest.builder()
@@ -33,11 +42,11 @@ public class QuoteUploadImpl implements QuoteUpload {
                 .contentType(quotes.contentType)//"image/jpeg")
                 .build();
         CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
-                putOb, AsyncRequestBody.fromFile(quotes.physical)
+                putOb, AsyncRequestBody.fromBytes(quotes.physical)
         );
         future.whenComplete((resp, err) -> {
             try {
-                if(resp != null) {
+                if (resp != null) {
                     System.out.println("Uploaded!");
                 } else {
                     System.err.println(err.getMessage());
@@ -49,11 +58,12 @@ public class QuoteUploadImpl implements QuoteUpload {
         future.join();
     }
 
+
     @Override
     public void UploadMultipleFiles(List<Quote> quotes) {
         List<File> files = new ArrayList<>();
         for(Quote q : quotes) {
-            files.add(q.physical);
+            files.add(new File("."));
         }
 
         TransferManager transferManager = TransferManagerBuilder.standard().build();
