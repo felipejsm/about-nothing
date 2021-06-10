@@ -1,4 +1,4 @@
-package com.nssp.aboutnothing.usecase;
+package com.nssp.aboutnothing.usecase.inbound;
 
 import com.nssp.aboutnothing.data.model.Quote;
 

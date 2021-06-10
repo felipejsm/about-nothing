@@ -1,4 +1,4 @@
-package com.nssp.aboutnothing.usecase;
+package com.nssp.aboutnothing.usecase.inbound;
 
 import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.Transfer;
@@ -10,15 +10,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
-import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

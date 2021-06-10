@@ -3,7 +3,7 @@ package com.nssp.aboutnothing.entrypoint.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nssp.aboutnothing.data.model.Pun;
 import com.nssp.aboutnothing.data.model.Quote;
-import com.nssp.aboutnothing.usecase.QuoteUpload;
+import com.nssp.aboutnothing.usecase.inbound.QuoteUpload;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
