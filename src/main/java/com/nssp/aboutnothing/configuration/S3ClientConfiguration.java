@@ -15,10 +15,10 @@ import java.net.URI;
 @Data
 public class S3ClientConfiguration {
 
-    @Value("${aws.uri}")
+    @Value("${aws.s3.uri}")
     private URI uri;
 
-    @Value("${aws.s3.region}")
+    @Value("${aws.region}")
     private Region region;
 
     @Value("${aws.s3.bucket}")
