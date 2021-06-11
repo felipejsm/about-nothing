@@ -40,7 +40,7 @@ public class QuoteUploadImpl implements QuoteUpload {
         myMap.put("meta2", "data2");
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(this.s3Configuration.getBucket())
-                .key(quotes.name)
+                .key(quotes.eTag+quotes.name)// ocorrencia + funcional + inclusao
                 .contentType(quotes.contentType)
                 .metadata(myMap)
                 .build();
