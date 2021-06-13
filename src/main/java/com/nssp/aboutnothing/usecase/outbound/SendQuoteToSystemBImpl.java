@@ -19,7 +19,7 @@ public class SendQuoteToSystemBImpl implements SendQuoteToSystemB {
     private HttpClient httpClient;
     public SendQuoteToSystemBImpl(HttpClientConfiguration httpClientConfiguration) {
         this.httpClientConfiguration = httpClientConfiguration;
-        this.httpClient = this.httpClientConfiguration.getClient();
+        this.httpClient = this.httpClientConfiguration.getHttpClient();
     }
 
 

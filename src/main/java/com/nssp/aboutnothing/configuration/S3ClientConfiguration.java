@@ -25,7 +25,7 @@ public class S3ClientConfiguration {
     private String bucket;
 
     @Bean
-    public S3Client getClient() {
+    public S3Client getS3Client() {
         S3ClientBuilder s3ClientBuilder = S3Client.builder();
         if(this.uri != null) {
             s3ClientBuilder.endpointOverride(uri);
@@ -35,7 +35,7 @@ public class S3ClientConfiguration {
     }
 
     @Bean
-    public S3AsyncClient getAsyncClient() {
+    public S3AsyncClient getAsyncS3Client() {
         var s3AsyncClientBuilder = S3AsyncClient.builder();
         if(this.uri != null) {
             s3AsyncClientBuilder.endpointOverride(this.uri);

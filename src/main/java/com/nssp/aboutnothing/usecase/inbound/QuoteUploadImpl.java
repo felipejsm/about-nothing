@@ -29,7 +29,7 @@ public class QuoteUploadImpl implements QuoteUpload {
     private S3ClientConfiguration s3Configuration;
     public QuoteUploadImpl(S3ClientConfiguration s3Configuration) {
         this.s3Configuration = s3Configuration;
-        this.s3AsyncClient = this.s3Configuration.getAsyncClient();
+        this.s3AsyncClient = this.s3Configuration.getAsyncS3Client();
     }
     @Value("classpath:george_and_seinfeld_cafe.png")
     public Resource myFile;

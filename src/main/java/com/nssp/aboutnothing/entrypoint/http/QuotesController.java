@@ -5,6 +5,7 @@ import com.nssp.aboutnothing.data.model.Pun;
 import com.nssp.aboutnothing.data.model.Quote;
 import com.nssp.aboutnothing.usecase.inbound.QuoteUpload;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,5 +43,20 @@ public class QuotesController {
     @PostMapping(value= "/mult2")
     public String mult2(@RequestBody List<Pun> pun) {
         return "ok";
+    }
+
+    @PostMapping("/quotes")
+    public ResponseEntity<Quote> postQuote(@RequestBody Quote quotes) {
+        return null;
+    }
+
+    @GetMapping("/quotes/{id_quote}")
+    public ResponseEntity<Quote> getQuote(@PathVariable String idQuote) {
+        return null;
+    }
+
+    @DeleteMapping("/quotes/{id_quote}")
+    public ResponseEntity deleteQuote(@PathVariable String idQuote) {
+        return null;
     }
 }

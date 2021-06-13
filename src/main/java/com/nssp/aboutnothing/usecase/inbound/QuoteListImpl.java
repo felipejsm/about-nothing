@@ -21,7 +21,7 @@ public class QuoteListImpl implements QuoteList {
     private S3Client s3Client;
     public QuoteListImpl(S3ClientConfiguration s3ClientConfiguration) {
         this.s3ClientConfiguration = s3ClientConfiguration;
-        this.s3Client = this.s3ClientConfiguration.getClient();
+        this.s3Client = this.s3ClientConfiguration.getS3Client();
     }
 
     @Override
@@ -44,8 +44,9 @@ public class QuoteListImpl implements QuoteList {
 
         Map<String, String> metadata = s3Client.headObject(headReq).metadata();
         ObjectMapper objectMapper = new ObjectMapper();
+        Quote json = new Quote();
         try {
-            Quote json = objectMapper.convertValue(metadata, Quote.class);
+            json = objectMapper.convertValue(metadata, Quote.class);
         } catch(Exception e) {
 
         }

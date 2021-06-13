@@ -21,7 +21,7 @@ public class HttpClientConfiguration {
     @Value("${sf.uri}")
     private URI uri;
     @Bean
-    public HttpClient getClient() {
+    public HttpClient getHttpClient() {
         var httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)

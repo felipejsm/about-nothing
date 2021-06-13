@@ -9,8 +9,8 @@ import software.amazon.awssdk.services.glacier.GlacierClient;
 
 import java.net.URI;
 
-@Configuration
-@Data
+//@Configuration
+//@Data
 public class GlacierClientConfiguration {
 
     @Value("${aws.glacier.uri}")
@@ -20,7 +20,7 @@ public class GlacierClientConfiguration {
 
     @Value("${aws.region}")
     private Region region;
-
+/*
     @Bean
     public GlacierClient getClient() {
         var glacier = GlacierClient.builder();
@@ -29,4 +29,6 @@ public class GlacierClientConfiguration {
         }
         return glacier.region(this.region).build();
     }
+
+ */
 }
