@@ -52,20 +52,21 @@ public class QuotesController {
         return "ok";
     }
 
-    @PostMapping("/quotes")
-    public ResponseEntity<Quote> postQuote(@RequestBody Quote quotes) {
+    @PostMapping(value = "/quotes",consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Quote> postQuote(@RequestPart("physical") MultipartFile file,@RequestPart("quotes") Quote quotes) throws IOException {
+
         var q = this.quoteUpload.UploadSingleFile(quotes);
         return ResponseEntity.created(URI.create("/quotes/"+q.id)).body(q);
     }
 
     @GetMapping("/quotes/{id_quote}")
-    public ResponseEntity<Quote> getQuote(@PathVariable String idQuote) {
+    public ResponseEntity<Quote> getQuote(@PathVariable("id_quote") String idQuote) {
         var q = this.quoteList.uniqueQuote(idQuote);
         return ResponseEntity.ok(q);
     }
 
     @DeleteMapping("/quotes/{id_quote}")
-    public ResponseEntity deleteQuote(@PathVariable String idQuote) {
+    public ResponseEntity deleteQuote(@PathVariable("id_quote") String idQuote) {
         this.quoteDelete.deleteSingleFile(idQuote);
         return ResponseEntity.accepted().build();
     }
