@@ -42,6 +42,14 @@ public class QuoteListImpl implements QuoteList {
                 .key(key)
                 .build();
 
+        unique(key);
+        return null;
+    }
+    private Quote unique(String key) {
+        HeadObjectRequest headReq = HeadObjectRequest.builder()
+                .key(key)
+                .build();
+
         Map<String, String> metadata = s3Client.headObject(headReq).metadata();
         ObjectMapper objectMapper = new ObjectMapper();
         Quote json = new Quote();
@@ -50,6 +58,10 @@ public class QuoteListImpl implements QuoteList {
         } catch(Exception e) {
 
         }
-        return null;
+        return json;
+    }
+    @Override
+    public Quote uniqueQuote(String key) {
+        return unique(key);
     }
 }

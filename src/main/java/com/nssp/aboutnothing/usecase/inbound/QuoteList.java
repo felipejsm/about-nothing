@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface QuoteList {
     List<Quote> listQuotes(String key);
+    Quote uniqueQuote(String key);
 }

@@ -16,10 +16,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -34,31 +32,37 @@ public class QuoteUploadImpl implements QuoteUpload {
     @Value("classpath:george_and_seinfeld_cafe.png")
     public Resource myFile;
     @Override
-    public void UploadSingleFile(Quote quotes) {
+    public Quote UploadSingleFile(Quote quotes) {
         Map<String, String> myMap = new HashMap<>();
         myMap.put("meta1", "data1");
         myMap.put("meta2", "data2");
+        quotes.id = UUID.randomUUID().toString();
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(this.s3Configuration.getBucket())
-                .key(quotes.eTag+quotes.name)// ocorrencia + funcional + inclusao
+                .key(quotes.id)// ocorrencia + funcional + inclusao
                 .contentType(quotes.contentType)
                 .metadata(myMap)
                 .build();
-        CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
-                putOb, AsyncRequestBody.fromBytes(quotes.physical)
-        );
-        future.whenComplete((resp, err) -> {
-            try {
-                if (resp != null) {
-                    System.out.println("Uploaded!");
-                } else {
-                    System.err.println(err.getMessage());
+        try {
+            CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
+                    putOb, AsyncRequestBody.fromBytes(quotes.physical.getBytes())
+            );
+            future.whenComplete((resp, err) -> {
+                try {
+                    if (resp != null) {
+                        System.out.println("Uploaded!");
+                    } else {
+                        System.err.println(err.getMessage());
+                    }
+                } finally {
+                    s3AsyncClient.close();
                 }
-            } finally {
-                s3AsyncClient.close();
-            }
-        });
-        future.join();
+            });
+            future.join();
+        } catch (IOException ioException) {
+
+        }
+        return quotes;
     }
 
 

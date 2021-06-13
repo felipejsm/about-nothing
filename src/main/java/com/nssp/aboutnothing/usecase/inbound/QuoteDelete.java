@@ -5,6 +5,6 @@ import com.nssp.aboutnothing.data.model.Quote;
 import java.util.List;
 
 public interface QuoteDelete {
-    void deleteSingleFile(Quote quote);
+    void deleteSingleFile(String key);
     void deleteMultipleFiles(List<Quote> quotes);
 }
