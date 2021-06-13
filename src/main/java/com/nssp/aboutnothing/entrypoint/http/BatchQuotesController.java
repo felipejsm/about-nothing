@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/batch_quotes")
 public class BatchQuotesController {
     @PostMapping
-    public ResponseEntity<Quote> post() {
+    public ResponseEntity<List<Quote>> post() {
+
         return null;
     }
     @GetMapping("/status/{id_status}")

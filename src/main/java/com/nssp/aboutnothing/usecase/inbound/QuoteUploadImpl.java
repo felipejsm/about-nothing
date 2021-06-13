@@ -36,16 +36,16 @@ public class QuoteUploadImpl implements QuoteUpload {
         Map<String, String> myMap = new HashMap<>();
         myMap.put("meta1", "data1");
         myMap.put("meta2", "data2");
-        quotes.id = UUID.randomUUID().toString();
+        quotes.setId(UUID.randomUUID().toString());
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(this.s3Configuration.getBucket())
-                .key(quotes.id)// ocorrencia + funcional + inclusao
-                .contentType(quotes.contentType)
+                .key(quotes.getId())// ocorrencia + funcional + inclusao
+                .contentType(quotes.getContentType())
                 .metadata(myMap)
                 .build();
         try {
             CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
-                    putOb, AsyncRequestBody.fromBytes(quotes.physical.getBytes())
+                    putOb, AsyncRequestBody.fromBytes(quotes.getPhysical().getBytes())
             );
             future.whenComplete((resp, err) -> {
                 try {
@@ -55,13 +55,14 @@ public class QuoteUploadImpl implements QuoteUpload {
                         System.err.println(err.getMessage());
                     }
                 } finally {
-                    s3AsyncClient.close();
+                    //s3AsyncClient.close();
                 }
             });
             future.join();
         } catch (IOException ioException) {
 
         }
+        quotes.setPhysical(null);
         return quotes;
     }
 

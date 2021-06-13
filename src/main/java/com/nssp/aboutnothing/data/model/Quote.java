@@ -1,11 +1,13 @@
 package com.nssp.aboutnothing.data.model;
 
+import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+@Data
 public class Quote {
-    public String id;
-    public String name;
-    public String contentType;
-    public String description;
-    public MultipartFile physical;
+    private String id;
+    private String name;
+    private String contentType;
+    private String description;
+    private MultipartFile physical;
 }

@@ -35,7 +35,7 @@ public class QuotesController {
         try{
             var om = new ObjectMapper();
             q = om.readValue(quote, Quote.class);
-            q.physical = physical;
+            q.setPhysical(physical);
         } catch(IOException ioe) {
 
         }
@@ -52,11 +52,10 @@ public class QuotesController {
         return "ok";
     }
 
-    @PostMapping(value = "/quotes",consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<Quote> postQuote(@RequestPart("physical") MultipartFile file,@RequestPart("quotes") Quote quotes) throws IOException {
-
+    @PostMapping(value="/quotes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Quote> postQuote(@ModelAttribute Quote quotes) throws IOException {
         var q = this.quoteUpload.UploadSingleFile(quotes);
-        return ResponseEntity.created(URI.create("/quotes/"+q.id)).body(q);
+        return ResponseEntity.created(URI.create("/quotes/"+q.getId())).body(q);
     }
 
     @GetMapping("/quotes/{id_quote}")
