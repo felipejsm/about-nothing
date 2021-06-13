@@ -1,5 +1,6 @@
 package com.nssp.aboutnothing.usecase.inbound;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.Transfer;
 import com.amazonaws.services.s3.transfer.TransferManager;
@@ -9,6 +10,7 @@ import com.nssp.aboutnothing.data.model.Quote;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -25,9 +27,12 @@ public class QuoteUploadImpl implements QuoteUpload {
     private S3AsyncClient s3AsyncClient;
     private S3Client s3Client;
     private S3ClientConfiguration s3Configuration;
-    public QuoteUploadImpl(S3ClientConfiguration s3Configuration) {
+    private AmazonS3 amazonS3;
+    public QuoteUploadImpl(S3ClientConfiguration s3Configuration, AmazonS3 amazonS3) {
         this.s3Configuration = s3Configuration;
         this.s3AsyncClient = this.s3Configuration.getAsyncS3Client();
+        this.amazonS3 = amazonS3;
+
     }
     @Value("classpath:george_and_seinfeld_cafe.png")
     public Resource myFile;
@@ -65,8 +70,44 @@ public class QuoteUploadImpl implements QuoteUpload {
         quotes.setPhysical(null);
         return quotes;
     }
+    @Override
+    public String uploadMultipleFiles2(List<MultipartFile> multipartFilesList) {
+        List<File> files = new ArrayList<>();
+        for(MultipartFile mfl : multipartFilesList) {
+            File newFile = new File (mfl.getOriginalFilename());
+            try {
+                mfl.transferTo(newFile);
+            } catch(IOException ioe) {
 
+            }
+            files.add(newFile);
+        }
 
+        TransferManager transferManager = TransferManagerBuilder
+                .standard()
+                .withS3Client(this.amazonS3).build();
+        try {
+            MultipleFileUpload mfp = transferManager.uploadFileList(
+                    this.s3Configuration.getBucket(),
+                    "quotes-",
+                    new File("."),
+                    files);
+            do {
+                var progress = mfp.getProgress();
+                long so_far = progress.getBytesTransferred();
+                long total = progress.getTotalBytesToTransfer();
+                double pct = progress.getPercentTransferred();
+                System.out.println("so far "+so_far);
+                System.out.println("total "+total);
+                System.out.println("pct "+pct);
+            } while(!mfp.isDone());
+            Transfer.TransferState xfer_state = mfp.getState();
+            System.out.println(": " + xfer_state);
+        } catch(Exception e) {
+
+        }
+        return "ok";
+    }
     @Override
     public void UploadMultipleFiles(List<Quote> quotes) {
         List<File> files = new ArrayList<>();

@@ -1,5 +1,8 @@
 package com.nssp.aboutnothing.configuration;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +35,16 @@ public class S3ClientConfiguration {
         }
         return s3ClientBuilder.region(this.region)
                 .build();
+    }
+    @Bean
+    public AmazonS3 getAmazonS3() {
+
+        var s3 = AmazonS3ClientBuilder.standard();
+        if(this.uri != null) {
+                s3.withEndpointConfiguration(
+                    new AwsClientBuilder.EndpointConfiguration(this.uri.toString(), this.region.toString()));
+        }
+        return s3.build();
     }
 
     @Bean
