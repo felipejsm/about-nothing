@@ -74,7 +74,7 @@ public class QuoteUploadImpl implements QuoteUpload {
     public String uploadMultipleFiles2(List<MultipartFile> multipartFilesList) {
         List<File> files = new ArrayList<>();
         for(MultipartFile mfl : multipartFilesList) {
-            File newFile = new File (mfl.getOriginalFilename());
+            File newFile = new File (System.getProperty("user.dir")+mfl.getOriginalFilename());
             try {
                 mfl.transferTo(newFile);
             } catch(IOException ioe) {
