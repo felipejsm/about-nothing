@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nssp.aboutnothing.configuration.S3ClientConfiguration;
 import com.nssp.aboutnothing.data.model.Quote;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +33,18 @@ public class QuoteListImpl implements QuoteList {
                 .map(ListObjectsV2Response::contents)
                 .flatMap(List::stream)
                 .filter(s3Object -> {
-                    return s3Object.key().equals(key);
+                    return s3Object.key().startsWith(key);
                 });
-
-        HeadObjectRequest headReq = HeadObjectRequest.builder()
-                .key(key)
-                .build();
-
-        unique(key);
-        return null;
+        List<Quote> quotes = new ArrayList<>();
+        lista.forEach(l -> {
+            System.out.println(l.key());
+            quotes.add(unique(l.key()));
+        });
+        return quotes;
     }
     private Quote unique(String key) {
         HeadObjectRequest headReq = HeadObjectRequest.builder()
+                .bucket(this.s3ClientConfiguration.getBucket())
                 .key(key)
                 .build();
 
@@ -62,6 +60,7 @@ public class QuoteListImpl implements QuoteList {
     }
     @Override
     public Quote uniqueQuote(String key) {
-        return unique(key);
+        Quote quote = unique(key);
+        return quote;
     }
 }

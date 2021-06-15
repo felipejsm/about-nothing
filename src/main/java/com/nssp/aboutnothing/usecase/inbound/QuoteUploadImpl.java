@@ -38,13 +38,22 @@ public class QuoteUploadImpl implements QuoteUpload {
     public Resource myFile;
     @Override
     public Quote UploadSingleFile(Quote quotes) {
+        var uui = UUID.randomUUID().toString();
+        quotes.setId("fileA/".concat(uui));
+        /*
+        private String id;
+    private String name;
+    private String contentType;
+    private String description;
+        * */
         Map<String, String> myMap = new HashMap<>();
-        myMap.put("meta1", "data1");
-        myMap.put("meta2", "data2");
-        quotes.setId(UUID.randomUUID().toString());
+        myMap.put("id", quotes.getId());
+        myMap.put("name", quotes.getName());
+        myMap.put("contentType", quotes.getContentType());
+        myMap.put("description", quotes.getDescription());
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(this.s3Configuration.getBucket())
-                .key(quotes.getId())// ocorrencia + funcional + inclusao
+                .key(quotes.getId())
                 .contentType(quotes.getContentType())
                 .metadata(myMap)
                 .build();
@@ -74,7 +83,7 @@ public class QuoteUploadImpl implements QuoteUpload {
     public String uploadMultipleFiles2(List<MultipartFile> multipartFilesList) {
         List<File> files = new ArrayList<>();
         for(MultipartFile mfl : multipartFilesList) {
-            File newFile = new File (System.getProperty("user.dir")+mfl.getOriginalFilename());
+            File newFile = new File (System.getProperty("user.dir").concat("\\").concat(mfl.getOriginalFilename()));
             try {
                 mfl.transferTo(newFile);
             } catch(IOException ioe) {
@@ -82,15 +91,15 @@ public class QuoteUploadImpl implements QuoteUpload {
             }
             files.add(newFile);
         }
-
         TransferManager transferManager = TransferManagerBuilder
                 .standard()
                 .withS3Client(this.amazonS3).build();
         try {
             MultipleFileUpload mfp = transferManager.uploadFileList(
                     this.s3Configuration.getBucket(),
-                    "quotes-",
-                    new File("."),
+                    "",
+                    files.get(0).getParentFile(),
+                    //new File(System.getProperty("user.dir")),
                     files);
             do {
                 var progress = mfp.getProgress();
@@ -114,7 +123,6 @@ public class QuoteUploadImpl implements QuoteUpload {
         for(Quote q : quotes) {
             files.add(new File("."));
         }
-
         TransferManager transferManager = TransferManagerBuilder.standard().build();
         try {
             MultipleFileUpload mfp = transferManager.uploadFileList(
