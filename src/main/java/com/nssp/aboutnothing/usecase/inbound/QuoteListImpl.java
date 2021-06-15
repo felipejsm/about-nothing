@@ -3,6 +3,9 @@ package com.nssp.aboutnothing.usecase.inbound;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nssp.aboutnothing.configuration.S3ClientConfiguration;
 import com.nssp.aboutnothing.data.model.Quote;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -21,7 +24,13 @@ public class QuoteListImpl implements QuoteList {
         this.s3ClientConfiguration = s3ClientConfiguration;
         this.s3Client = this.s3ClientConfiguration.getS3Client();
     }
-
+    private Page<Quote> toPage(List<Quote> list, Pageable pageable) {
+        int totalPages = list.size() / pageable.getPageSize();
+        int max = pageable.getPageNumber() >= totalPages ? list.size() : pageable.getPageSize() *(pageable.getPageNumber()+1);
+        int min = pageable.getPageNumber() > totalPages ? max : pageable.getPageSize()*pageable.getPageNumber();
+        Page<Quote> pageResponse = new PageImpl<>(list.subList(min, max), pageable, list.size());
+        return pageResponse;
+    }
     @Override
     public List<Quote> listQuotes(String key) {
         List<String> listaDeChaves = new ArrayList<>();
@@ -40,6 +49,7 @@ public class QuoteListImpl implements QuoteList {
             System.out.println(l.key());
             quotes.add(unique(l.key()));
         });
+        //toPage(quotes, pageable)
         return quotes;
     }
     private Quote unique(String key) {
