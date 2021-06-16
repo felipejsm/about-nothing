@@ -32,7 +32,7 @@ public class QuoteListImpl implements QuoteList {
         return pageResponse;
     }
     @Override
-    public List<Quote> listQuotes(String key) {
+    public Page<Quote> listQuotes(String key, Pageable pageable) {
         List<String> listaDeChaves = new ArrayList<>();
         Stream<S3Object> lista =
         this.s3Client.listObjectsV2Paginator(ListObjectsV2Request.builder()
@@ -49,8 +49,7 @@ public class QuoteListImpl implements QuoteList {
             System.out.println(l.key());
             quotes.add(unique(l.key()));
         });
-        //toPage(quotes, pageable)
-        return quotes;
+        return toPage(quotes, pageable);
     }
     private Quote unique(String key) {
         HeadObjectRequest headReq = HeadObjectRequest.builder()

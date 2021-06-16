@@ -32,15 +32,15 @@ public class QuoteMetadataController {
 
         return null;
     }
-
+/*
     @GetMapping("/list")
     public ResponseEntity<List<Quote>> getList(@RequestParam String key) {
         return ResponseEntity.ok().body(this.quoteList.listQuotes(key));
     }
-
+*/
     @GetMapping("/page")
     public Page<Quote> get(Pageable pageable, @PathParam("id") String id) {
-        return null;//return this.repository.findAll(pageable);
+        return this.quoteList.listQuotes(id, pageable);//return this.repository.findAll(pageable);
     }
 
 }
