@@ -9,4 +9,5 @@ public interface QuoteUpload {
     Quote UploadSingleFile(Quote quotes);
     void UploadMultipleFiles(List<Quote> quotes);
     String uploadMultipleFiles2(List<MultipartFile> multipartFilesList);
+    String uploadMult(List<Quote> quotes);
 }

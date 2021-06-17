@@ -117,6 +117,48 @@ public class QuoteUploadImpl implements QuoteUpload {
         }
         return "ok";
     }
+    private void insere(Quote quotes) {
+        var uui = UUID.randomUUID().toString();
+        quotes.setId("fileA/".concat(uui));
+        Map<String, String> myMap = new HashMap<>();
+        myMap.put("id", quotes.getId());
+        myMap.put("name", quotes.getName());
+        myMap.put("contentType", quotes.getContentType());
+        myMap.put("description", quotes.getDescription());
+        PutObjectRequest putOb = PutObjectRequest.builder()
+                .bucket(this.s3Configuration.getBucket())
+                .key(quotes.getId())
+                .contentType(quotes.getContentType())
+                .metadata(myMap)
+                .build();
+        try {
+            CompletableFuture<PutObjectResponse> future = this.s3AsyncClient.putObject(
+                    putOb, AsyncRequestBody.fromBytes(quotes.getPhysical().getBytes())
+            );
+            future.whenComplete((resp, err) -> {
+                try {
+                    if (resp != null) {
+                        System.out.println("Uploaded! -> "+ quotes.getId());
+                    } else {
+                        System.err.println(err.getMessage());
+                    }
+                } finally {
+                    //s3AsyncClient.close();
+                }
+            });
+            future.join();
+        } catch (IOException ioException) {
+
+        }
+    }
+    @Override
+    public String uploadMult(List<Quote> quotes) {
+        quotes.parallelStream().forEach( q ->
+                insere(q)
+        );
+        return "ok";
+    }
+
     @Override
     public void UploadMultipleFiles(List<Quote> quotes) {
         List<File> files = new ArrayList<>();
